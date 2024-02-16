@@ -18,8 +18,13 @@ const PlaceItem = (props) => {
                 show={showMap}
                 onCancel={closeMapHandler}
                 header={props.address}
-                contentClass="place-item__modal__content">
-                <div className="map-container"></div>
+                contentClass="place-item__modal-content"
+                footerClass="place-item__modal-actions"
+                footer={<Button onClick={closeMapHandler}>Close</Button>}
+            >
+                <div className="map-container">
+                    <h2>Show Google Map Here!</h2>
+                </div>
             </Modal>
             <li className="place-item">
                 <Card className="place-item__content">
