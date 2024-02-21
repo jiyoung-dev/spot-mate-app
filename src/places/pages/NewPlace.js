@@ -6,8 +6,20 @@ import './NewPlace.css';
 const NewPlace = () => {
     return (
         <form className="place-form">
-            <Input element="input" type="text" label="Title" />
-            <Input element="input" type="text" label="Description" />
+            <Input
+                element="input"
+                type="text"
+                label="Title"
+                validators={[]}
+                errorText="Please enter a valid title."
+            />
+            <Input
+                element="textarea"
+                type="text"
+                label="Description"
+                validators={[]}
+                errorText="Please enter a valid description."
+            />
         </form>
     );
 };
