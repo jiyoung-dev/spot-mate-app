@@ -3,7 +3,6 @@ import React from 'react';
 import { validate } from '../../util/validators';
 import './Input.css';
 
-// reducer 함수 작성
 const inputReducer = (state, action) => {
     switch (action.type) {
         case 'CHANGE':
@@ -12,23 +11,30 @@ const inputReducer = (state, action) => {
                 value: action.val,
                 isValid: validate(action.val, action.validators),
             };
-        case 'TOUCH':
+        case 'TOUCH': {
             return {
                 ...state,
                 isTouched: true,
             };
+        }
         default:
             return state;
     }
 };
 
 const Input = (props) => {
-    // useReducer를 사용하여 상태와 상태를 변경하는 함수를 생성
     const [inputState, dispatch] = React.useReducer(inputReducer, {
         value: '',
         isValid: false,
         isTouched: false,
     });
+
+    const { id, onInput } = props;
+    const { value, isValid } = inputState;
+
+    React.useEffect(() => {
+        onInput(id, value, isValid);
+    }, [id, value, isValid, onInput]);
 
     const changeHandler = (event) => {
         dispatch({
@@ -66,7 +72,11 @@ const Input = (props) => {
 
     return (
         <div
-            className={`form-control ${!inputState.isValid && inputState.isTouched && 'form-control--invalid'}`}
+            className={`form-control ${
+                !inputState.isValid &&
+                inputState.isTouched &&
+                'form-control--invalid'
+            }`}
         >
             <label htmlFor={props.id}>{props.label}</label>
             {element}
