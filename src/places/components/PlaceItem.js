@@ -8,10 +8,25 @@ import './PlaceItem.css';
 
 const PlaceItem = (props) => {
     const [showMap, setShowMap] = React.useState(false);
+    const [showConfirmModal, setShowConfirmModal] = React.useState(false);
 
     const openMapHandler = () => setShowMap(true);
 
     const closeMapHandler = () => setShowMap(false);
+
+    const showConfirmModalHandler = () => {
+        setShowConfirmModal(true);
+    };
+
+    const cancelDeleteHandler = () => {
+        setShowConfirmModal(false);
+    };
+
+    const confirmDeleteHandler = () => {
+        // TO-DO: 서버에 data 삭제 요청
+        console.log('Deleting...');
+        setShowConfirmModal(false);
+    };
 
     return (
         <>
@@ -26,6 +41,24 @@ const PlaceItem = (props) => {
                 <div className="map-container">
                     <Map zoom={16} center={props.coordinates} />
                 </div>
+            </Modal>
+            <Modal
+                show={showConfirmModal}
+                onCancel={cancelDeleteHandler}
+                header="Are you sure?"
+                footerClass="place-item__modal-actions"
+                footer={
+                    <>
+                        <Button inverse onClick={cancelDeleteHandler}>
+                            Cancel
+                        </Button>
+                        <Button danger onClick={confirmDeleteHandler}>
+                            Delete
+                        </Button>
+                    </>
+                }
+            >
+                <p>Do you want to proceed and delete this place? </p>
             </Modal>
             <li className="place-item">
                 <Card className="place-item__content">
@@ -42,7 +75,9 @@ const PlaceItem = (props) => {
                             View on Map
                         </Button>
                         <Button to={`/places/${props.id}`}>Edit</Button>
-                        <Button danger>Delete</Button>
+                        <Button danger onClick={showConfirmModalHandler}>
+                            Delete
+                        </Button>
                     </div>
                 </Card>
             </li>
