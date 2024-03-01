@@ -31,19 +31,21 @@ const UpdatePlace = () => {
     const identifiedPlace = PLACES.find((p) => p.id === placeId);
 
     React.useEffect(() => {
-        initializeFormData(
-            {
-                title: {
-                    value: identifiedPlace.title,
-                    isValid: true,
+        if (identifiedPlace) {
+            initializeFormData(
+                {
+                    title: {
+                        value: identifiedPlace.title,
+                        isValid: true,
+                    },
+                    description: {
+                        value: identifiedPlace.description,
+                        isValid: true,
+                    },
                 },
-                description: {
-                    value: identifiedPlace.description,
-                    isValid: true,
-                },
-            },
-            true
-        );
+                true
+            );
+        }
         setIsLoading(false);
     }, [initializeFormData, identifiedPlace]);
 
