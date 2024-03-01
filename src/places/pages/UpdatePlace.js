@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
+import useForm from '../../shared/hooks/useForm';
 import { PLACES } from './UserPlaces';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
@@ -11,10 +12,55 @@ import {
 
 const UpdatePlace = () => {
     const placeId = useParams().placeId;
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    const [formState, inputHandler, initializeFormData] = useForm(
+        {
+            title: {
+                value: '',
+                isValid: false,
+            },
+            description: {
+                value: '',
+                isValid: false,
+            },
+        },
+        false
+    );
 
     const identifiedPlace = PLACES.find((p) => p.id === placeId);
 
-    console.log(identifiedPlace);
+    React.useEffect(() => {
+        initializeFormData(
+            {
+                title: {
+                    value: identifiedPlace.title,
+                    isValid: true,
+                },
+                description: {
+                    value: identifiedPlace.description,
+                    isValid: true,
+                },
+            },
+            true
+        );
+        setIsLoading(false);
+    }, [initializeFormData, identifiedPlace]);
+
+    const placeSubmitHandler = (event) => {
+        event.preventDefault();
+
+        // TO-DO: form data 서버에 전송
+        console.log(formState.inputs);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="center">
+                <h2>Loading...</h2>
+            </div>
+        );
+    }
 
     if (!identifiedPlace) {
         return (
@@ -23,12 +69,6 @@ const UpdatePlace = () => {
             </div>
         );
     }
-
-    const placeSubmitHandler = (event) => {
-        event.preventDefault();
-
-        // TO-DO: form data 서버에 전송
-    };
 
     return (
         <form className="place-form" onSubmit={placeSubmitHandler}>
@@ -39,9 +79,9 @@ const UpdatePlace = () => {
                 label="Title"
                 validators={[VALIDATOR_REQUIRE()]}
                 errorText="Please enter a valid title."
-                onInput={() => {}}
-                value={identifiedPlace.title}
-                valid={true}
+                onInput={inputHandler}
+                value={formState.inputs.title.value}
+                valid={formState.inputs.title.isValid}
             />
             <Input
                 id="description"
@@ -49,11 +89,11 @@ const UpdatePlace = () => {
                 label="Description"
                 validators={[VALIDATOR_MINLENGTH(5)]}
                 errorText="Please enter a valid description (at least 5 characters)."
-                onInput={() => {}}
-                value={identifiedPlace.description}
-                valid={true}
+                onInput={inputHandler}
+                value={formState.inputs.description.value}
+                valid={formState.inputs.description.isValid}
             />
-            <Button type="submit" disabled={true}>
+            <Button type="submit" disabled={!formState.isValid}>
                 ADD PLACE
             </Button>
         </form>
