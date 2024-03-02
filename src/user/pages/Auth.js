@@ -14,7 +14,7 @@ import './Auth.css';
 const Auth = () => {
     const [isLoginMode, setIsLoginMode] = React.useState(true);
 
-    const [formState, inputHandler] = useForm({
+    const [formState, inputHandler, initializeFormData] = useForm({
         email: {
             value: '',
             isValid: false,
@@ -33,6 +33,30 @@ const Auth = () => {
     };
 
     const switchModeHandler = () => {
+        // Sign Up -> Login 스위칭
+        if (!isLoginMode) {
+            initializeFormData(
+                {
+                    ...formState.inputs,
+                    name: undefined,
+                },
+                formState.inputs.email.isValid &&
+                    formState.inputs.password.isValid
+            );
+        } else {
+            // Login -> Sign Up  스위칭
+            initializeFormData(
+                {
+                    ...formState.inputs,
+                    name: {
+                        value: '',
+                        isValid: false,
+                    },
+                },
+                false
+            );
+        }
+        // 모드를 전환
         setIsLoginMode((prev) => !prev);
     };
 
