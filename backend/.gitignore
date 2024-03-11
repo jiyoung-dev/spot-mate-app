@@ -1,0 +1,17 @@
+# dependencies
+/node_modules
+
+# 로컬 환경 설정
+.env
+.env.local
+.env.*.local
+
+# Log files
+logs
+*.log
+
+# macOS
+.DS_Store
+
+# 빌드 파일
+/build
