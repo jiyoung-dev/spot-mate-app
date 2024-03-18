@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import useForm from '../../shared/hooks/useForm';
-import { PLACES } from './UserPlaces';
+import { PLACES } from 'src/_mock/place';
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import {
