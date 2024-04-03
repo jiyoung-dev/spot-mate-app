@@ -62,6 +62,41 @@ const createPlace = (req, res, next) => {
     res.status(201).json({ place: createdPlace });
 };
 
+const updatePlace = (req, res, next) => {
+    const placeId = req.params.pid;
+    const { title, description, coordinates, address, creator } = req.body;
+
+    const updatedPlaceIndex = DUMMY_PLACES.findIndex(place => place.id === placeId);
+
+    const updatedPlace = {
+        id: placeId,
+        title,
+        description,
+        location: coordinates,
+        address,
+        creator
+    }
+
+    DUMMY_PLACES[updatedPlaceIndex] = updatedPlace;
+
+    res.status(200).json({ place: updatedPlace });
+}
+
+const deletePlace = (req, res, next) => {
+    const placeId = req.params.pid;
+
+    console.log(DUMMY_PLACES);
+    console.log('삭제하려는 아이디 :', placeId);
+
+    const updatedPlaces = DUMMY_PLACES.filter(place => place.id !== placeId);
+
+    console.log(updatedPlaces);
+
+    res.status(200).json({ message: 'Place deleted successfully' });
+}
+
 exports.getPlaceById = getPlaceById;
 exports.getPlaceByUserId = getPlaceByUserId;
 exports.createPlace = createPlace;
+exports.updatePlace = updatePlace;
+exports.deletePlace = deletePlace;

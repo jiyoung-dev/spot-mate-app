@@ -13,4 +13,10 @@ router.get('/user/:uid', placesControllers.getPlaceByUserId);
 // 장소 추가 
 router.post('/', placesControllers.createPlace);
 
+// 장소 수정  
+router.patch('/:pid', placesControllers.updatePlace);
+
+// 장소 삭제 
+router.delete('/:pid', placesControllers.deletePlace);
+
 module.exports = router;
