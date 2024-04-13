@@ -20,10 +20,6 @@ router.post(
 );
 
 // 로그인 요청
-router.post(
-  "/login",
-  [check("email").isEmail(), check("password").isLength({ min: 5 })],
-  usersControllers.loginUser
-);
+router.post("/login", usersControllers.loginUser);
 
 module.exports = router;
