@@ -29,7 +29,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@mern.ocwrg80.mongodb.net/?retryWrites=true&w=majority&appName=mern`
+    `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@mern.ocwrg80.mongodb.net/mern?retryWrites=true&w=majority&appName=mern`
   )
   .then(() => {
     app.listen(3300);
