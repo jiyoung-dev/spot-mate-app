@@ -1,17 +1,9 @@
 const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
-
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    email: "test@test.com",
-    name: "Jenny",
-    password: "test123",
-  },
-];
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -50,11 +42,20 @@ const signupUser = async (req, res, next) => {
     return next(new HttpError("이미 사용중인 이메일입니다!", 401));
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later! ", 500)
+    );
+  }
+
   const createdUser = new User({
     id: uuid(),
     email,
     name,
-    password,
+    password: hashedPassword,
   });
 
   try {
@@ -82,13 +83,28 @@ const loginUser = async (req, res, next) => {
   }
 
   // 유저리스트에 존재하는 id 만 로그인 허용
-  if (!existingUser || existingUser.password !== password) {
+  if (!existingUser) {
     return next(
       new HttpError("존재하지 않는 아이디 또는 비밀번호 오류입니다.", 401)
     );
   }
 
   // user는 존재하는데, 비밀번호가 일치하지 않은경우
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later! ", 500)
+    );
+  }
+
+  if (!isValidPassword) {
+    return next(
+      new HttpError("존재하지 않는 아이디 또는 비밀번호 오류입니다.", 401)
+    );
+  }
+
   res.status(201).json({ message: "login succeeded" });
 };
 
