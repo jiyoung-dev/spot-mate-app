@@ -13,6 +13,8 @@ import './Auth.css';
 
 const Auth = () => {
     const [isLoginMode, setIsLoginMode] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState();
 
     const [formState, inputHandler, initializeFormData] = useForm({
         email: {
@@ -25,11 +27,50 @@ const Auth = () => {
         },
     });
 
-    const authSubmitHandler = (event) => {
+    const authSubmitHandler = async (event) => {
         event.preventDefault();
 
-        // TO-DO: 서버에 인증요청
-        console.log(formState.inputs);
+        if (isLoginMode) {
+            const response = await fetch(
+                'http://localhost:5500/api/users/login',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: formState.inputs.email.value,
+                        password: formState.inputs.password.value,
+                    }),
+                }
+            );
+            const responseData = response.json();
+            console.log(responseData);
+        } else {
+            try {
+                setIsLoading(true); // 서버에 전송하기전 로딩중표시
+                const response = await fetch(
+                    'http://localhost:5500/api/users/signup',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: formState.inputs.name.value,
+                            email: formState.inputs.email.value,
+                            password: formState.inputs.password.value,
+                        }),
+                    }
+                );
+                const responseData = response.json();
+                console.log(responseData);
+                setIsLoading(false);
+            } catch (error) {
+                console.log(error);
+                setIsLoading(false);
+            }
+        }
     };
 
     const switchModeHandler = () => {
