@@ -10,11 +10,14 @@ import {
     VALIDATOR_REQUIRE,
 } from '../../shared/util/validators';
 import './Auth.css';
+import { AuthContext } from 'src/shared/context/auth-context';
 
 const Auth = () => {
     const [isLoginMode, setIsLoginMode] = React.useState(true);
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState();
+
+    const auth = React.useContext(AuthContext); // 수신받는 컨택스트를 사용해보자
 
     const [formState, inputHandler, initializeFormData] = useForm({
         email: {
@@ -46,6 +49,8 @@ const Auth = () => {
             );
             const responseData = response.json();
             console.log(responseData);
+            // 로그인상태로 변경하기
+            auth.login();
         } else {
             try {
                 setIsLoading(true); // 서버에 전송하기전 로딩중표시
@@ -63,8 +68,9 @@ const Auth = () => {
                         }),
                     }
                 );
-                const responseData = response.json();
-                console.log(responseData);
+                // const responseData = response.json();
+                console.log(response);
+                console.log(response.userId);
                 setIsLoading(false);
             } catch (error) {
                 console.log(error);
