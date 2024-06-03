@@ -11,7 +11,12 @@ const HttpError = require("./models/http-error");
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:3000/" }));
+app.use(
+  cors({
+    origin: "http://localhost:3000/",
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // 수동으로 헤더설정 -> 모든 도메인에서 요청을 허용하므로 보안적으로 더 취약할수있다.
 // app.use((req, res, next) => {

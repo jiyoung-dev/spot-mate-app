@@ -1,6 +1,7 @@
 const { v4: uuid } = require("uuid");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
@@ -66,7 +67,26 @@ const signupUser = async (req, res, next) => {
     );
   }
 
-  res.status(201).json({ user: createdUser });
+  let token;
+  try {
+    // 토큰 생성함수
+    token = jwt.sign(
+      {
+        userId: createdUser.id,
+        email: createdUser.email,
+      },
+      "secrete_key",
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later! ", 500)
+    );
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
 const loginUser = async (req, res, next) => {
@@ -105,7 +125,28 @@ const loginUser = async (req, res, next) => {
     );
   }
 
-  res.status(201).json({ message: "login succeeded" });
+  let token;
+  try {
+    token = jwt.sign(
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+      },
+      "secrete_key",
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later! ", 500)
+    );
+  }
+
+  res.status(201).json({
+    message: "login succeeded",
+    userId: existingUser.id,
+    email: existingUser.email,
+    token: token,
+  });
 };
 
 exports.getUsers = getUsers;

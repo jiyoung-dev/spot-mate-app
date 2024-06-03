@@ -4,6 +4,7 @@ const { check } = require("express-validator");
 const router = express.Router();
 
 const placesControllers = require("../controllers/places-controllers");
+const checkAuth = require("../middleware/check-auth");
 
 // 장소ID에 해당하는 장소정보를 반환
 router.get("/:pid", placesControllers.getPlaceById);
@@ -11,9 +12,12 @@ router.get("/:pid", placesControllers.getPlaceById);
 // 작성자ID가 등록한 장소를 반환
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
 
+// 토큰검사기 역할의 use() 라우트 추가
+router.use(checkAuth);
+
 // 장소 추가
 router.post(
-  "/",
+  "/new",
   // 유효성검사 미들웨어 등록
   [
     check("title").not().isEmpty(),
