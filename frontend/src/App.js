@@ -15,7 +15,8 @@ import Auth from './user/pages/Auth';
 import { AuthContext } from './shared/context/auth-context';
 
 const App = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [token, setToken] = useState(null);
+    const [userId, setUserId] = useState(null);
 
     // useCallback 사용하는 이유:
     // - context를 사용하는 컴포넌트들의 불필요한 리렌더링 방지를 위해.
@@ -23,17 +24,19 @@ const App = () => {
     // - 만약 login함수가 매번 새로 생성이되면, value객체도 매번 새로운 객체로 인식되므로 context를 사용하는 모든 컴포넌트가 리렌더링될수있다.
     // - login과 logout함수를 메모이제이션 해두고, provider의 value객체가 변하지 않는다고 인식하기때문에 불필요한 렌더링을 막는다.
 
-    const login = useCallback(() => {
-        setIsLoggedIn(true);
+    const login = useCallback((token, uid) => {
+        setToken(token);
+        setUserId(uid);
     }, []);
 
     const logout = useCallback(() => {
-        setIsLoggedIn(false);
+        setToken(null);
+        setUserId(null);
     }, []);
 
     let routes;
 
-    if (isLoggedIn) {
+    if (token) {
         routes = (
             <Switch>
                 <Route path="/" exact>
@@ -70,7 +73,13 @@ const App = () => {
 
     return (
         <AuthContext.Provider
-            value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+            value={{
+                isLoggedIn: !!token, // token이 존재하면 true, 없으면 false
+                token: token,
+                userId: userId,
+                login: login,
+                logout: logout,
+            }}
         >
             <Router>
                 <MainNavigation />

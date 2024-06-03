@@ -47,10 +47,9 @@ const Auth = () => {
                     }),
                 }
             );
-            const responseData = response.json();
-            console.log(responseData);
+            const responseData = await response.json();
             // 로그인상태로 변경하기
-            auth.login();
+            auth.login(responseData.token, responseData.userId);
         } else {
             try {
                 setIsLoading(true); // 서버에 전송하기전 로딩중표시
@@ -68,12 +67,8 @@ const Auth = () => {
                         }),
                     }
                 );
-                // const responseData = response.json();
-                console.log(response);
-                console.log(response.userId);
                 setIsLoading(false);
             } catch (error) {
-                console.log(error);
                 setIsLoading(false);
             }
         }
