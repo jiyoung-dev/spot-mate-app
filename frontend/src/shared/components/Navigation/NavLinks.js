@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { AuthContext } from 'src/shared/context/auth-context';
 import './NavLinks.css';
 
 const NavLinks = (props) => {
-    const auth = useContext(AuthContext); // 수신받는 컨택스트를 사용해보자
+    const auth = React.useContext(AuthContext);
 
     return (
         <ul className="nav-links">
@@ -16,7 +16,7 @@ const NavLinks = (props) => {
             </li>
             {auth.isLoggedIn && (
                 <li>
-                    <NavLink to="/:uid/places">My Places</NavLink>
+                    <NavLink to={`/${auth.userId}/places`}>My Places</NavLink>
                 </li>
             )}
             {auth.isLoggedIn && (

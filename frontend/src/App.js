@@ -61,7 +61,7 @@ const App = () => {
                     <Users />
                 </Route>
                 <Route path="/:userId/places" exact>
-                    <UserPlaces />
+                    <Redirect to="/" />
                 </Route>
                 <Route path="/auth">
                     <Auth />
