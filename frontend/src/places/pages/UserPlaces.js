@@ -28,13 +28,29 @@ const UserPlaces = () => {
         }
     };
 
+    console.log(loadedPlaces);
+
+    // 장소가 삭제되면 트리거되는 함수
+    const placeDeletedHandler = (deletedPlaceId) => {
+        setLoadedPlaces((prevPlaces) =>
+            prevPlaces.filter((place) => place.id !== deletedPlaceId)
+        );
+    };
+
     React.useEffect(() => {
         getPlacesByUserId();
     }, [userId]);
 
     return (
         // loadedPlaces가 있을때만 PlaceList 렌더링
-        <>{loadedPlaces && <PlaceList items={loadedPlaces} />}</>
+        <>
+            {loadedPlaces && (
+                <PlaceList
+                    items={loadedPlaces}
+                    onDeletePlace={placeDeletedHandler}
+                />
+            )}
+        </>
     );
 };
 

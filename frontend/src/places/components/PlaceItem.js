@@ -25,10 +25,27 @@ const PlaceItem = (props) => {
         setShowConfirmModal(false);
     };
 
-    const confirmDeleteHandler = () => {
-        // TO-DO: 서버에 data 삭제 요청
-        console.log('Deleting...');
+    const confirmDeleteHandler = async () => {
+        try {
+            const response = await fetch(
+                `http://localhost:5500/api/places/${props.id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${auth.token}`,
+                    },
+                }
+            );
+            const responseData = await response.json();
+            console.log(responseData);
+        } catch (error) {
+            console.log(error);
+        }
+
         setShowConfirmModal(false);
+        // 현재 페이지 새로고침: 최상위 부모컴포넌트에 알린다
+        props.onDlete();
     };
 
     return (
@@ -77,7 +94,8 @@ const PlaceItem = (props) => {
                         <Button inverse onClick={openMapHandler}>
                             View on Map
                         </Button>
-                        {auth.isLoggedIn && (
+                        {/* 작성자와 로그인한 유저의 ID가 일치하는 경우에만 수정,삭제버튼 표시 */}
+                        {auth.isLoggedIn && props.creatorId === auth.userId && (
                             <>
                                 <Button to={`/places/${props.id}`}>Edit</Button>
                                 <Button
