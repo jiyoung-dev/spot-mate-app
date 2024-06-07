@@ -6,12 +6,14 @@ import Modal from '../../shared/components/UIElements/Modal';
 import Map from '../../shared/components/UIElements/Map';
 import './PlaceItem.css';
 import { AuthContext } from 'src/shared/context/auth-context';
+import useHttpClient from 'src/shared/hooks/useHttpClient';
 
 const PlaceItem = (props) => {
     const [showMap, setShowMap] = React.useState(false);
     const [showConfirmModal, setShowConfirmModal] = React.useState(false);
-
     const auth = React.useContext(AuthContext);
+
+    const [sendRequest] = useHttpClient();
 
     const openMapHandler = () => setShowMap(true);
 
@@ -27,17 +29,12 @@ const PlaceItem = (props) => {
 
     const confirmDeleteHandler = async () => {
         try {
-            const response = await fetch(
+            const responseData = await sendRequest(
                 `http://localhost:5500/api/places/${props.id}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${auth.token}`,
-                    },
-                }
+                'DELETE',
+                null,
+                auth.token
             );
-            const responseData = await response.json();
             console.log(responseData);
         } catch (error) {
             console.log(error);
@@ -45,7 +42,7 @@ const PlaceItem = (props) => {
 
         setShowConfirmModal(false);
         // 현재 페이지 새로고침: 최상위 부모컴포넌트에 알린다
-        props.onDlete();
+        props.onDelete(props.id);
     };
 
     return (

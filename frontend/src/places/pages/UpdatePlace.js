@@ -9,6 +9,7 @@ import {
     VALIDATOR_MINLENGTH,
 } from '../../shared/util/validators';
 import { AuthContext } from 'src/shared/context/auth-context';
+import useHttpClient from 'src/shared/hooks/useHttpClient';
 
 const UpdatePlace = () => {
     const placeId = useParams().placeId;
@@ -30,6 +31,8 @@ const UpdatePlace = () => {
         },
         false
     );
+
+    const [sendRequest] = useHttpClient();
 
     // placeId 에 해당하는 장소를 DB로부터 조회한다.
     const getPlaceById = async () => {
@@ -76,23 +79,15 @@ const UpdatePlace = () => {
     const placeSubmitHandler = async (event) => {
         event.preventDefault();
 
-        // TO-DO: form data 서버에 전송
-        console.log(formState.inputs);
-
         try {
-            const response = await fetch(
+            await sendRequest(
                 `http://localhost:5500/api/places/${placeId}`,
+                'PATCH',
                 {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${auth.token}`,
-                    },
-                    body: JSON.stringify({
-                        title: formState.inputs.title.value,
-                        description: formState.inputs.description.value,
-                    }),
-                }
+                    title: formState.inputs.title.value,
+                    description: formState.inputs.description.value,
+                },
+                auth.token
             );
 
             // 데이터 전송 후 리디렉션

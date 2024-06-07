@@ -11,13 +11,11 @@ import {
 } from '../../shared/util/validators';
 import './Auth.css';
 import { AuthContext } from 'src/shared/context/auth-context';
+import useHttpClient from 'src/shared/hooks/useHttpClient';
 
 const Auth = () => {
     const [isLoginMode, setIsLoginMode] = React.useState(true);
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState();
-
-    const auth = React.useContext(AuthContext); // 수신받는 컨택스트를 사용해보자
+    const auth = React.useContext(AuthContext);
 
     const [formState, inputHandler, initializeFormData] = useForm({
         email: {
@@ -30,47 +28,35 @@ const Auth = () => {
         },
     });
 
+    const [sendRequest, clearError, isLoading, error] = useHttpClient();
+
     const authSubmitHandler = async (event) => {
         event.preventDefault();
 
         if (isLoginMode) {
-            const response = await fetch(
+            const responseData = await sendRequest(
                 'http://localhost:5500/api/users/login',
+                'POST',
                 {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: formState.inputs.email.value,
-                        password: formState.inputs.password.value,
-                    }),
+                    email: formState.inputs.email.value,
+                    password: formState.inputs.password.value,
                 }
             );
-            const responseData = await response.json();
+
             // 로그인상태로 변경하기
             auth.login(responseData.token, responseData.userId);
         } else {
             try {
-                setIsLoading(true); // 서버에 전송하기전 로딩중표시
-                const response = await fetch(
+                await sendRequest(
                     'http://localhost:5500/api/users/signup',
+                    'POST',
                     {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name: formState.inputs.name.value,
-                            email: formState.inputs.email.value,
-                            password: formState.inputs.password.value,
-                        }),
+                        name: formState.inputs.name.value,
+                        email: formState.inputs.email.value,
+                        password: formState.inputs.password.value,
                     }
                 );
-                setIsLoading(false);
-            } catch (error) {
-                setIsLoading(false);
-            }
+            } catch (error) {}
         }
     };
 
